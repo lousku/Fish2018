@@ -8,9 +8,12 @@ var xml_valid = '<?xml version="1.0"?>'+
 '</comment>';
 var xml_invalid = '<?xml version="1.0"?><comment>A comment</comment>'
 
+console.log( process.env.PATH );
 
 
 validator.validateXML(xml_valid, 'schema.xsd', function(err, result) {
+
+
   if (err) {
     throw err;
   }
