@@ -2,6 +2,18 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var seriveWakeURI = 'http://escop.rd.tut.fi:3000/RTU/SimROB1/services/LoadPaper'
+var destURL = "http://escop.rd.tut.fi:3000/fmw"
+
+request.post(
+    seriveWakeURI, { json: {"destUrl": destURL} },
+    function (error, response, body) {
+        console.log(body);
+        console.log('paperi ladattu');
+    }
+);
+
+
 app.get('/', function(req,res){
   res.sendFile(__dirname + '/index.html');
 });
