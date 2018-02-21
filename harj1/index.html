@@ -29,6 +29,11 @@
           socket.emit('get services');
       });
 
+      $('#wakeEventButton').click(function(){
+          $('#messages').append($('<li>').text('try to wake events'));
+          socket.emit('wake event');
+      });
+
       socket.on('messageToUi', function(msg){
           $('#messages').append($('<li>').text(msg));
       });
@@ -39,6 +44,7 @@
   <body>
     <button id="requestEventsButton">request events</button>
     <button id='getServicesButton'>get services</button>
+    <button id='wakeEventButton'>wakeEvent</button>
     <ul id="messages"></ul>
   </body>
 </html>

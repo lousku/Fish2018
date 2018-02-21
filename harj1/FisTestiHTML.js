@@ -4,6 +4,7 @@ var io = require('socket.io')(http);
 var request = require('request');
 
 var seriveWakeURI = 'http://192.168.100.113/rest/services/startEvents'
+var eventWakeUp = 'http://192.168.100.113/rest/events/timeWS'
 var serviceUrl = 'http://192.168.100.113/rest/events'
 var destURL = "http://192.168.0.1:3000"
 
@@ -32,7 +33,7 @@ io.on('connection', function(socket){
   console.log('a user connected');
 
   socket.on('event request', function(){
-    request.post(seriveWakeURI, { json: {"destUrl": destURL} },
+    request.post(seriveWakeURI,  '{"destUrl": destURL}' ,
     function (error, response, body) {
             console.log('event request done, returned body: ' + JSON.stringify(body));
             io.emit('messageToUi',"Request done, received body: " + JSON.stringify(body));
@@ -46,6 +47,15 @@ io.on('connection', function(socket){
       io.emit('messageToUi','available services: '+ JSON.stringify(body))
     });
   });
+
+  socket.on('wake event', function(){
+    request.post(eventWakeUp, { json: {"destUrl": destURL} },
+    function (error, response, body) {
+      console.log('event waked, body received: '+ JSON.stringify(body));
+      io.emit('messageToUi','event waked, body received: '+ JSON.stringify(body));
+    });
+  });
+
 
 });
 
