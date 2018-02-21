@@ -18,20 +18,27 @@
   <script>
     $(function () {
       var socket = io();
-      $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
-   });
-   socket.on('viestin valitys', function(msg){
-      $('#messages').append($('<li>').text(msg)); 
-   });
-});
+
+      $('#requestEventsButton').click(function(){
+          $('#messages').append($('<li>').text('connecting to events'));
+          socket.emit('event request');
+      });
+
+      $('#getServicesButton').click(function(){
+          $('#messages').append($('<li>').text('getting services'));
+          socket.emit('get services');
+      });
+
+      socket.on('messageToUi', function(msg){
+          $('#messages').append($('<li>').text(msg));
+      });
+    });
   </script>
+
+
   <body>
+    <button id="requestEventsButton">request events</button>
+    <button id='getServicesButton'>get services</button>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
   </body>
 </html>
