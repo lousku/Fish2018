@@ -31,7 +31,9 @@
 
       $('#wakeEventButton').click(function(){
           $('#messages').append($('<li>').text('try to wake events'));
-          socket.emit('wake event');
+          var uriValue = $('#uriValue').val();
+          var sendingBody = $('#BodyValue').val();
+          socket.emit('wake event',uriValue,sendingBody);
       });
 
       socket.on('messageToUi', function(msg){
@@ -42,9 +44,11 @@
 
 
   <body>
-    <button id="requestEventsButton">request events</button>
+    <!--<button id="requestEventsButton">request events</button>-->
     <button id='getServicesButton'>get services</button>
     <button id='wakeEventButton'>wakeEvent</button>
+    uri end(path): <input type="text" id= "uriValue">
+    body to send: <input type="text" id= "BodyValue">
     <ul id="messages"></ul>
   </body>
 </html>

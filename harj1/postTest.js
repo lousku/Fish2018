@@ -4,9 +4,9 @@ var http = require('http');
 var obj = JSON.parse('{ "destUrl":"192.168.0.1:3000"}')
 options = {
   method: 'post',
-  body:  obj ,
+  body: {"destUrl":"http://192.168.0.1:3000"},
   json: true, // Use,If you are sending JSON data
-  url: 'http://192.168.100.113/rest/events/time/notifs',
+  url: 'http://192.168.100.102/rest/services/startEvents',
   headers: {'Content-Type': 'application/json'},
 
   };
@@ -21,17 +21,21 @@ options = {
       console.log(body) ;
 });
 
-http.createServer((request, response) => {
-  const { headers, method, url } = request;
-  let body = [];
-  request.on('error', (err) => {
-    console.error(err);
-  }).on('data', (chunk) => {
-    body.push(chunk);
-  }).on('end', () => {
-    body = Buffer.concat(body).toString();
-    console.log(body);
-    console.log(method);
-    console.log(url);
-  });
-}).listen(3000);
+var server = http.createServer(function (request, response) {
+    var REQ_url = request.url;
+    var REQ_Method = request.method;
+
+  console.log(REQ_url);
+  console.log(REQ_method);
+
+
+    response.write('<!DOCTYPE html>');
+
+    response.end();
+
+});
+
+server.listen(3000,'0.0.0.0');
+
+// Put a friendly message on the terminal
+console.log("Server running at http://192.168.100.113:3000/");
