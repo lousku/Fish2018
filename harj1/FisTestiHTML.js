@@ -18,40 +18,36 @@ var IPadressS1000 = "http://192.168.100.113"   //S1000 IP
 
 //
 
-
+//When got POST request from S1000 this function starts.
 app.post('', function(req,res){
   console.log( JSON.stringify(req.body.payload.timeStamp));
   io.emit('messageToUi',"post request received with timestamp: " + JSON.stringify(req.body.payload.timeStamp));
 
   var timeStamp = JSON.stringify(req.body.payload.timeStamp);
-  console.log("TIMESTAMP:" + timeStamp)
   var seconds = timeStamp.substring(18,20);
-  console.log("seconds:"+seconds);
-
   var binarySeconds = parseInt(seconds).toString(2);
-  console.log("binary:"+binarySeconds);
 
 //fill to eight bit binary
   for (i = binarySeconds.length; i < 8;i++){
     binarySeconds = "0"+binarySeconds;
   }
-  console.log("uusibinaari:"+ binarySeconds);
 
   changeLights(binarySeconds);
 
 });
 
-//
+//When opening website from browser. send index html page
 app.get('/', function(req,res){
   res.sendFile(__dirname + '/index.html');
   console.log("HTML User Interface opened");
 });
 
-//Kun nettiselaimella mennään localhost:3000
+//when webbrowser connection is established
 io.on('connection', function(socket){
   console.log('a user connected');
 
-  //Kun käyttiksen kautta tulee "get services"-käsky
+  //when from frontend get service - button is pressed
+  //send get request to S1000 receive json filled with service info
   socket.on('get services', function(){
     request.get(serviceUrl, { json: {"destUrl": destURL} },
     function (error, response, body) {
@@ -60,6 +56,8 @@ io.on('connection', function(socket){
     });
   });
 
+  //when from frontend wake service - button is pressed
+  //send post request to S1000 startEvents service is waken
   socket.on('wakeService', function(){
     console.log('waking services');
     var options = {
@@ -84,7 +82,8 @@ io.on('connection', function(socket){
     });
 
   });
-
+  //when from frontend subscribe - button is pressed
+  // subscribing to time notifs is established. start receiving timestamps from S1000
   socket.on('subscribe', function(){
     var options = {
       method: 'post',
@@ -101,7 +100,7 @@ io.on('connection', function(socket){
               console.log('Error :', err);
               return;
           }
-          //check zonenumber from request (because requests are async functions, they may return at any time)
+
           console.log('Subscribed. received Body: ' + JSON.stringify(body));
           io.emit('messageToUi','Subscribed. received Body: ' + JSON.stringify(body));
 
@@ -110,13 +109,10 @@ io.on('connection', function(socket){
   });
 
 
-//Kun käyttiksen kautta tulee wake event - käsky
 
 
 
-  //8 bits string in example 11110000
-
-
+//change S1000 outputs. input is eigh char string containing 1 or 0 (example "10101010")
   function changeLightsSOAP(trueStates){
     var SOAP_message = '<?xml version="1.0" encoding="ISO-8859-1"?>'+
         '<s12:Envelope'+
@@ -156,12 +152,9 @@ function changeLights(trueStates) {
   for (i = 0; i < trueStates.length; i++) {
       if(trueStates.charAt(i) == 1){
         States[i] = true;
-        console.log(i.toString() + "=" + "True")
       }
       else{
         States[i] = false;
-        console.log(i.toString() + "=" + "False")
-
       }
   }
 

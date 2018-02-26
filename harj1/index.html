@@ -35,21 +35,16 @@
       });
 
 
-
       socket.on('messageToUi', function(msg){
           $('#messages').append($('<li>').text(msg));
       });
     });
   </script>
-
-
+  
   <body>
-    <!--<button id="requestEventsButton">request events</button>-->
     <button id='getServicesBtn'>Get services</button> <br>
-
     <button id='wakeService'>wake service</button> <br>
     <button id='subscribeBtn'>Subscribe</button> <br>
-
 
     <ul id="messages"></ul>
   </body>
