@@ -3,6 +3,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var request = require('request');
 
+
+
 var seriveWakeURI = 'http://192.168.100.113/rest/services/startEvents'
 var eventWakeUp = 'http://192.168.100.113/rest/events/timeWS'
 var serviceUrl = 'http://192.168.100.113/rest/events'
@@ -42,11 +44,50 @@ io.on('connection', function(socket){
     });
   });
 
+  socket.on('wake service', function( uriToSend){
+    options = {
+      method: 'post',
+      body: {"destUrl":"http://192.168.0.1:3000/"},
+      json: true, // Use,If you are sending JSON data
+      url: 'http://192.168.100.113' + uriToSend,
+      headers: {'Content-Type': 'application/json'},
+
+      };
+
+      //sen request to RTU
+      request(options, function (err, res, body) {
+          if (err) {
+              console.log('Error :', err);
+              return;
+          }
+          //check zonenumber from request (because requests are async functions, they may return at any time)
+          console.log('received body: ' + JSON.stringify(body));
+
+    });
+
+  });
+
+
 //Kun käyttiksen kautta tulee wake event - käsky
-  socket.on('wake event', function(uriValue, sentBody){
+  socket.on('ChangeLights', function( sentBody){
     changeLights(sentBody);
 
   });
+
+  socket.on('Blink', function( sentBody){
+    var lightStatuses = "";
+    setInterval(function() {
+      lightStatuses = "";
+      for (var i = 0; i < 8; i++){
+        lightStatuses += (parseInt(Math.random()*2)).toString(); //add random number to strin 0 or 1;
+        console.log("light statuses: " + lightStatuses);
+      }
+      changeLights(lightStatuses);
+    }, 5000);
+
+
+  });
+
 
   //8 bits string in example 11110000
   function changeLights(trueStates) {
@@ -60,6 +101,8 @@ io.on('connection', function(socket){
         }
         else{
           States[i] = false;
+          console.log(i.toString() + "=" + "False")
+
         }
     }
 
@@ -69,8 +112,39 @@ io.on('connection', function(socket){
       io.emit('messageToUi','event waked at:' + IPadressS1000 +"/rest/services/changeOutput" +' body received: '+ JSON.stringify(body));
     });
   }
+
+  function changeLightsSOAP(trueStates){
+    var SOAP_message = '<?xml version="1.0" encoding="ISO-8859-1"?>'+
+        '<s12:Envelope'+
+        'xmlns:s12="http://www.w3.org/2003/05/soap-envelope"'+
+        'xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">'+
+        '<s12:Header>'+
+        '<wsa:Action>http://www.tut.fi/fast/Assignment/UpdateOutputs_Request</wsa:Action>'+
+        '</s12:Header>'+
+        '<s12:Body>'+
+      '  <!—PUT YOU MESSAGE OF THE OUTPUTS HEREUSE THE WSDL FILE FOR THIS-->'+
+        '</s12:Body>'+
+        '</s12:Envelope>'
+
+
+  var options = {
+    method: 'post',
+    body: SOAP_message,
+    json: true, // Use,If you are sending JSON data
+    Link: 'http://192.168.100.113/dpws/WS01',
+    headers: {'Content-Type': ' text/xml; charset=utf-8',
+              'host': '192.168.100.113:80',
+              'connection': 'close',
+              'accept-charset': 'utf-8',
+              'accept-encoding': 'none',
+              'accept':'text/html,application/xhtml+xml,application/xml,text/xml;q=0.9,*/*;q=0.8'
+              },
+
+    };
+  }
+
 });
 
-http.listen(3000, function(){
+http.listen(3000,"0.0.0.0", function(){
   console.log('listening on 3000');
 });
