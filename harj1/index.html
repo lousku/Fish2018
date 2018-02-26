@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>FIS Assigment</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -21,26 +21,20 @@
 
       $('#wakeService').click(function(){
           $('#messages').append($('<li>').text('waking service'));
-          var uriValue = $('#uriValue').val();
-
-          socket.emit('wake service', uriValue);
+          socket.emit('wakeService');
       });
 
-      $('#getServicesButton').click(function(){
-          $('#messages').append($('<li>').text('getting services'));
+      $('#subscribeBtn').click(function(){
+          $('#messages').append($('<li>').text('Subscribing'));
+          socket.emit('subscribe');
+      });
+
+      $('#getServicesBtn').click(function(){
+          $('#messages').append($('<li>').text('Getting services'));
           socket.emit('get services');
       });
 
-      $('#changeLigthsEventButton').click(function(){
-          $('#messages').append($('<li>').text('try to wake events'));
-          var sendingBody = $('#BodyValue').val();
-          socket.emit('ChangeLights',sendingBody);
-      });
 
-      $('#Blink').click(function(){
-          $('#messages').append($('<li>').text('Blinkin started'));
-          socket.emit('Blink');
-      });
 
       socket.on('messageToUi', function(msg){
           $('#messages').append($('<li>').text(msg));
@@ -51,11 +45,11 @@
 
   <body>
     <!--<button id="requestEventsButton">request events</button>-->
-    <button id='getServicesButton'>get services</button>  get services from S1000 <br>
-    <button id='wakeService'>wake service</button>
-    uri end(path): <input type="text" id= "uriValue"> add path where you want to send POST request <br>
-    <button id='changeLigthsEventButton'>change lights</button> Light statusest: <input type="text" id= "BodyValue"> sen ligth statuses like "10101010" <br>
-    <button id='Blink'>Blink lights</button> start sending changeLights request every 5s <br>
+    <button id='getServicesBtn'>Get services</button> <br>
+
+    <button id='wakeService'>wake service</button> <br>
+    <button id='subscribeBtn'>Subscribe</button> <br>
+
 
     <ul id="messages"></ul>
   </body>
