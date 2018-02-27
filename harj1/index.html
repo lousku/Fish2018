@@ -13,6 +13,7 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+      #mainDiv {width:80%;margin-left: auto; margin-right: auto}
     </style>
   </head>
   <script src="/socket.io/socket.io.js"></script>
@@ -36,6 +37,11 @@
           socket.emit('get services');
       });
 
+      $('#sendSOAP').click(function(){
+          $('#messages').append($('<li>').text('sending SOAP'));
+          socket.emit('sendSOAP');
+      });
+
 
       socket.on('messageToUi', function(msg){
           $('#messages').append($('<li>').text(msg));
@@ -44,10 +50,16 @@
   </script>
 
   <body>
-    <button id='getServicesBtn'>Get services</button>
-    <button id='wakeService'>wake service</button> 
-    <button id='subscribeBtn'>Subscribe</button> <br>
+    <div id="mainDiv">
+      <div id="buttons">
+        <button id='getServicesBtn'>Get services</button>
+        <button id='wakeService'>wake service</button>
+        <button id='subscribeBtn'>Subscribe</button>
+        <button id='sendSOAP'>send SOAP</button>
 
-    <ul id="messages"></ul>
+
+      </div>
+        <ul id="messages"></ul>
+      </div>
   </body>
 </html>

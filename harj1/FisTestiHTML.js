@@ -82,6 +82,7 @@ io.on('connection', function(socket){
     });
 
   });
+
   //when from frontend subscribe - button is pressed
   // subscribing to time notifs is established. start receiving timestamps from S1000
   socket.on('subscribe', function(){
@@ -108,6 +109,11 @@ io.on('connection', function(socket){
 
   });
 
+  socket.on('sendSOAP', function(){
+
+    changeLightsSOAP('11111111');
+  })
+
 
 
 
@@ -115,23 +121,34 @@ io.on('connection', function(socket){
 //change S1000 outputs. input is eigh char string containing 1 or 0 (example "10101010")
   function changeLightsSOAP(trueStates){
     var SOAP_message = '<?xml version="1.0" encoding="ISO-8859-1"?>'+
-        '<s12:Envelope'+
-        'xmlns:s12="http://www.w3.org/2003/05/soap-envelope"'+
+        '<s12:Envelope '+
+        'xmlns:s12="http://www.w3.org/2003/05/soap-envelope" '+
+        'xmlns:ass="http://www.tut.fi/fast/Assignment" '+
         'xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">'+
         '<s12:Header>'+
         '<wsa:Action>http://www.tut.fi/fast/Assignment/UpdateOutputs_Request</wsa:Action>'+
         '</s12:Header>'+
         '<s12:Body>'+
-      '  <!—PUT YOU MESSAGE OF THE OUTPUTS HEREUSE THE WSDL FILE FOR THIS-->'+
+          '<ass:Outputs>'+
+          '<ass:output0>True</ass:output0>'+
+          '<ass:output1>True</ass:output1>'+
+          '<ass:output2>True</ass:output2>'+
+          '<ass:output3>True</ass:output3>'+
+          '<ass:output4>True</ass:output4>'+
+          '<ass:output5>True</ass:output5>'+
+          '<ass:output6>True</ass:output6>'+
+          '<ass:output7>True</ass:output7>'+
+          '</ass:Outputs>'+
         '</s12:Body>'+
         '</s12:Envelope>'
 
 
-  var options = {
+  var SOAP_options = {
     method: 'post',
     body: SOAP_message,
-    json: true, // Use,If you are sending JSON data
+    json: false, // Use,If you are sending JSON data
     Link: 'http://192.168.100.113/dpws/WS01',
+    uri: 'http://192.168.100.113/dpws/WS01',
     headers: {'Content-Type': ' text/xml; charset=utf-8',
               'host': '192.168.100.113:80',
               'connection': 'close',
@@ -141,6 +158,17 @@ io.on('connection', function(socket){
               },
 
     };
+
+    request(SOAP_options, function (err, res, body) {
+        if (err) {
+            console.log('Error :', err);
+            return;
+        }
+
+        console.log('SOAP sended, received ' + JSON.stringify(body));
+        io.emit('messageToUi','SOAP sended, received ' + JSON.stringify(body));
+
+  });
   }
 
 });
