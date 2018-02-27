@@ -5,9 +5,11 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      button { background-color: white; border: 2px solid #4CAF50; color: black; padding: 16px 32px; text-align: center;
+         text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; -webkit-transition-duration: 0.4s;
+          transition-duration: 0.4s; cursor: pointer; }
+      button:hover{  background-color: #4CAF50; color: white;    border: 2px solid #4CAF50;
+}
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
@@ -40,10 +42,10 @@
       });
     });
   </script>
-  
+
   <body>
-    <button id='getServicesBtn'>Get services</button> <br>
-    <button id='wakeService'>wake service</button> <br>
+    <button id='getServicesBtn'>Get services</button>
+    <button id='wakeService'>wake service</button> 
     <button id='subscribeBtn'>Subscribe</button> <br>
 
     <ul id="messages"></ul>

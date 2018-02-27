@@ -145,6 +145,7 @@ io.on('connection', function(socket){
 
 });
 
+//change S1000 outputs. input is eigh char string containing 1 or 0 (example "10101010")
 function changeLights(trueStates) {
 
   var States = [false, false, false,false,false,false,false,false];
